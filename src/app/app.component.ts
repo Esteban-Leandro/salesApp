@@ -1,5 +1,5 @@
-import { CurrencyPipe } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { CurrencyPipe, NgClass } from '@angular/common';
+import { Component, computed, effect, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ProductComponent } from "./components/product/product.component";
 
@@ -9,13 +9,15 @@ import { ProductComponent } from "./components/product/product.component";
   imports: [
     RouterOutlet,
     CurrencyPipe,
-    ProductComponent
+    ProductComponent,
+    NgClass
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'salesApp';
+
 
 
   productsSig = signal<Product[]>([
@@ -33,7 +35,7 @@ export class AppComponent {
     },
   ])
 
-  PaymentsMethodsSig = signal<PaymentsMethods[]>([
+  paymentsMethodsSig = signal<PaymentMethod[]>([
     {
       id:'1',
       name:'Efectivo',
@@ -50,6 +52,64 @@ export class AppComponent {
       icon:'bi-credit-card'
     },
   ])
+
+  paymentMethodSelectedSig = signal<PaymentMethod>(this.paymentsMethodsSig()[0])
+
+  cart = signal<Cart>({
+    products: [],
+    total: 0,
+  })
+
+
+  sale = computed<Sale>(()=>{
+    const sale: Sale = {
+      cart: this.cart(),
+      date: new Date(),
+      paymentMethod: this.paymentMethodSelectedSig()
+    }
+
+    return sale
+  })
+
+  constructor(){
+    effect(()=> console.log(this.sale()))
+  }
+
+  addProductToCart(product: Product){
+    this.cart.update(cart =>{
+
+      const newCart = {...cart}
+      let newTotal = 0;
+      newCart.products.push(product),
+
+
+      newCart.products.forEach(product => newTotal += product.price)
+      newCart.total = newTotal;
+
+      return newCart
+
+    })
+  }
+
+  removeProductToCart(product: Product){
+    this.cart.update(cart =>{
+
+      const newCart = {...cart}
+      let newTotal = 0;
+      newCart.products.push(product),
+
+
+      newCart.products.forEach(product => newTotal += product.price)
+      newCart.total = newTotal;
+
+      return newCart
+
+    })
+  }
+
+  selectPaymentMethod(paymentMethod:PaymentMethod){
+    this.paymentMethodSelectedSig.set(paymentMethod)
+  }
 }
 
 
@@ -61,9 +121,20 @@ export interface Product{
   price: number;
 }
 
-export interface PaymentsMethods{
+export interface PaymentMethod{
   id: string;
   name: string;
   icon: string;
 
+}
+
+export interface Cart{
+
+  products: Product[]
+  total: number;
+}
+export interface Sale{
+  date: Date,
+  cart: Cart
+  paymentMethod: PaymentMethod
 }

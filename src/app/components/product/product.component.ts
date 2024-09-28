@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { Product } from '../../app.component';
 import { CurrencyPipe } from '@angular/common';
 
@@ -17,10 +17,13 @@ export class ProductComponent {
 
   counterSig = signal<number>(0);
 
+  addProductEvent = output<Product>();
+  removeProductEvent = output<Product>();
 
 
   addProduct(){
     this.counterSig.update(value => value+1);
+    this.addProductEvent.emit(this.productSig());
   }
 
   removeProduct(){
@@ -29,5 +32,8 @@ export class ProductComponent {
         return 0;
       return value-1;
     });
+
+    this.removeProductEvent.emit(this.productSig());
+
   }
 }
