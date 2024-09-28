@@ -1,6 +1,6 @@
 import { CurrencyPipe, NgClass } from '@angular/common';
-import { Component, computed, effect, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { ProductComponent } from "./components/product/product.component";
 import { v4 as uuidv4 } from 'uuid';
 @Component({
@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class AppComponent {
   title = 'salesApp';
 
-
+  router = inject(Router)
 
   productsSig = signal<Product[]>([
     {
@@ -71,9 +71,17 @@ export class AppComponent {
     return sale
   })
 
+  salesSig = signal<Sale[]>([]);
+
   constructor(){
-    effect(()=> console.log(this.saleSig()))
+    const sales = localStorage.getItem('sales') ?? '';
+    if(sales)
+      this.salesSig.set(JSON.parse(sales))
+    effect(()=> {
+      localStorage.setItem('sales', JSON.stringify(this.salesSig()))
+    })
   }
+
 
   addProductToCart(product: Product){
     this.cartSig.update(cart =>{
@@ -114,6 +122,20 @@ export class AppComponent {
 
   selectPaymentMethod(paymentMethod:PaymentMethod){
     this.paymentMethodSelectedSig.set(paymentMethod)
+  }
+
+  confirmPayment(){
+    this.salesSig.update(sales=> {
+      const newSales = [...sales]
+
+      newSales.push(this.saleSig())
+      return newSales;
+    })
+    setTimeout(() => {
+      this.router.navigate([this.router.url]).then(() => {
+        window.location.reload();
+      });
+    }, 500);
   }
 }
 

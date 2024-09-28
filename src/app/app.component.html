@@ -29,9 +29,29 @@
       <div class="w-100"></div>
 
       <div class="col-3 d-grid">
-        <button class="btn btn-primary">Pagar {{sale.total |currency:'CLP':'symbol':'1.0-0'}}</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" [disabled]="sale.total <= 0 ">Pagar {{sale.total |currency:'CLP':'symbol':'1.0-0'}}</button>
       </div>
 
     </div>
   </div>
 </section>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-theme="dark">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-gray-900 text-white">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmas el pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="confirmPayment()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
