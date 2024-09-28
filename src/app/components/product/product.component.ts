@@ -1,6 +1,7 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, input, OnInit, output, signal, WritableSignal } from '@angular/core';
 import { Product } from '../../app.component';
 import { CurrencyPipe } from '@angular/common';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-product',
@@ -11,7 +12,7 @@ import { CurrencyPipe } from '@angular/common';
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss'
 })
-export class ProductComponent {
+export class ProductComponent{
 
   productSig = input.required<Product>({alias: 'product'})
 
@@ -20,9 +21,9 @@ export class ProductComponent {
   addProductEvent = output<Product>();
   removeProductEvent = output<Product>();
 
-
   addProduct(){
     this.counterSig.update(value => value+1);
+
     this.addProductEvent.emit(this.productSig());
   }
 
@@ -32,6 +33,7 @@ export class ProductComponent {
         return 0;
       return value-1;
     });
+
 
     this.removeProductEvent.emit(this.productSig());
 

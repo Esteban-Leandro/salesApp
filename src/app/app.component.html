@@ -1,13 +1,15 @@
 @let products = productsSig();
 @let PaymentsMethods = paymentsMethodsSig();
 @let paymentMethodSelected = paymentMethodSelectedSig();
+@let sale = saleSig();
+
 
 <section class="bg-gray-900 vh-100 d-flex justify-content-center align-items-center">
   <div class="container">
     <div class="row justify-content-center g-3">
       @for (product of products; track product.id) {
         <div class="col-3">
-          <app-product [product]="product" (addProductEvent)="addProductToCart($event)"/>
+          <app-product [product]="product" (addProductEvent)="addProductToCart($event)" (removeProductEvent)="removeProductToCart($event)"/>
         </div>
       }
       <div class="w-100"></div>
@@ -27,7 +29,7 @@
       <div class="w-100"></div>
 
       <div class="col-3 d-grid">
-        <button class="btn btn-primary">Pagar</button>
+        <button class="btn btn-primary">Pagar {{sale.total |currency:'CLP':'symbol':'1.0-0'}}</button>
       </div>
 
     </div>

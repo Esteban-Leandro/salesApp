@@ -2,7 +2,7 @@ import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, computed, effect, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ProductComponent } from "./components/product/product.component";
-
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -55,31 +55,32 @@ export class AppComponent {
 
   paymentMethodSelectedSig = signal<PaymentMethod>(this.paymentsMethodsSig()[0])
 
-  cart = signal<Cart>({
+  cartSig = signal<Cart>({
     products: [],
     total: 0,
   })
 
 
-  sale = computed<Sale>(()=>{
+  saleSig = computed<Sale>(()=>{
     const sale: Sale = {
-      cart: this.cart(),
+      cart: this.cartSig(),
       date: new Date(),
-      paymentMethod: this.paymentMethodSelectedSig()
+      paymentMethod: this.paymentMethodSelectedSig(),
+      total: this.paymentMethodSelectedSig().id === '3' ? this.cartSig().total + this.cartSig().products.length * 100 : this.cartSig().total
     }
-
     return sale
   })
 
   constructor(){
-    effect(()=> console.log(this.sale()))
+    effect(()=> console.log(this.saleSig()))
   }
 
   addProductToCart(product: Product){
-    this.cart.update(cart =>{
+    this.cartSig.update(cart =>{
 
       const newCart = {...cart}
       let newTotal = 0;
+
       newCart.products.push(product),
 
 
@@ -92,11 +93,15 @@ export class AppComponent {
   }
 
   removeProductToCart(product: Product){
-    this.cart.update(cart =>{
+    this.cartSig.update(cart =>{
 
       const newCart = {...cart}
       let newTotal = 0;
-      newCart.products.push(product),
+
+      const index = newCart.products.findIndex(oldProduct => product.id === oldProduct.id);
+      if(index !== -1)
+        newCart.products.splice(index, 1)
+
 
 
       newCart.products.forEach(product => newTotal += product.price)
@@ -116,6 +121,7 @@ export class AppComponent {
 
 export interface Product{
   id: string;
+  uuid?:string;
   name: string;
   description: string;
   price: number;
@@ -136,5 +142,6 @@ export interface Cart{
 export interface Sale{
   date: Date,
   cart: Cart
-  paymentMethod: PaymentMethod
+  paymentMethod: PaymentMethod,
+  total: number
 }
