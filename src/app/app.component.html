@@ -29,7 +29,7 @@
       <div class="w-100"></div>
 
       <div class="col-3 d-grid">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" [disabled]="sale.total <= 0 ">Pagar {{sale.total |currency:'CLP':'symbol':'1.0-0'}}</button>
+        <button class="btn btn-primary"[disabled]="sale.total <= 0 " (click)="initPayment()">Pagar {{sale.total |currency:'CLP':'symbol':'1.0-0'}}</button>
       </div>
 
     </div>
