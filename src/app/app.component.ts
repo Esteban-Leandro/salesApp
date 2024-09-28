@@ -1,14 +1,16 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ProductComponent } from "./components/product/product.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
-    CurrencyPipe
-  ],
+    CurrencyPipe,
+    ProductComponent
+],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
