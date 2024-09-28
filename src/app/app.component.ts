@@ -35,14 +35,17 @@ export class AppComponent {
     {
       id:'1',
       name:'Efectivo',
+      icon:'bi-currency-dollar'
     },
     {
       id:'2',
       name:'Transferencia',
+      icon:'bi-bank'
     },
     {
       id:'3',
       name:'Tarjeta',
+      icon:'bi-credit-card'
     },
   ])
 }
@@ -59,5 +62,6 @@ export interface Product{
 export interface PaymentsMethods{
   id: string;
   name: string;
+  icon: string;
 
 }
